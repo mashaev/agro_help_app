@@ -1,0 +1,58 @@
+import 'package:flutter/material.dart';
+
+import '../helpers/database_helper.dart';
+
+import '../models/Post.dart';
+
+class PostDetailScreen extends StatelessWidget {
+  int postId;
+  String title;
+  String description;
+
+  PostDetailScreen(this.postId, this.title, this.description);
+
+  DatabaseHelper db = DatabaseHelper();
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(title),
+      ),
+      body: FutureBuilder<List<Post>>(
+        future: db.getPostModelData(postId),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData)
+            return Center(child: CircularProgressIndicator());
+
+          return ListView(
+            children: snapshot.data
+                .map(
+                  (item) => Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: InkWell(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(40.0),
+                        child: Container(
+                          height: 150,
+                          color: Colors.blue,
+                          child: Center(
+                            child: Text(
+                              item.description,
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                )
+                .toList(),
+          );
+        },
+      ),
+    );
+  }
+}
