@@ -26,8 +26,6 @@ class Categories extends StatefulWidget {
   }
 }
 
-
-
 class _CategoriesState extends State<Categories> {
   DatabaseHelper db = DatabaseHelper();
   Future<List<Category>> localCtgs;
@@ -75,7 +73,7 @@ class _CategoriesState extends State<Categories> {
           child: _showBody(context)),
     );
   }
-  
+
   Widget _showBody(BuildContext context) {
     if (!localShowed) {
       localCtgs.then((lctg) {
@@ -103,29 +101,31 @@ class _CategoriesState extends State<Categories> {
     return ListView(
       children: ctg
           .map(
-            (item) =>  Padding(
-              padding: const EdgeInsets.all(12.0),
+            (item) => Padding(
+              padding: const EdgeInsets.all(10.0),
               child: InkWell(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(30.0),
-                  child: Container(
-                    height: 150,
-                    color: Colors.blue,
-                    child: ListTile(
-                      title: Text(
-                        item.getTitle,
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold),
-                      ),
-                      subtitle: Text(
-                        item.getTitleKy,
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w500),
-                      ),
+                child: Container(
+                  height: 100,
+                  color: Colors.blue,
+                  child: ListTile(
+                    contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                    title: Text(
+                      item.getTitle,
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Text(
+                      item.getTitleKy,
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500),
+                    ),
+                    trailing: Icon(
+                      Icons.arrow_forward_ios,
+                      size: 30.0,
                     ),
                   ),
                 ),

@@ -1,8 +1,10 @@
+import 'package:agro_help_app/models/post_category.dart';
 import 'package:flutter/material.dart';
 
 import '../helpers/database_helper.dart';
 
 import '../models/Post.dart';
+import '../models/post_category.dart';
 
 class PostDetailScreen extends StatelessWidget {
   int postId;
@@ -18,8 +20,8 @@ class PostDetailScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(title),
       ),
-      body: FutureBuilder<List<Post>>(
-        future: db.getPostModelData(postId),
+      body: FutureBuilder<List<PostCategory>>(
+        future: db.getPostCategoryModelData(postId),
         builder: (context, snapshot) {
           if (!snapshot.hasData)
             return Center(child: CircularProgressIndicator());
@@ -37,7 +39,7 @@ class PostDetailScreen extends StatelessWidget {
                           color: Colors.blue,
                           child: Center(
                             child: Text(
-                              item.description,
+                              title,
                               style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 20,

@@ -4,7 +4,6 @@ import 'dart:convert';
 
 class Post {
   int id;
-  int categoryId;
   String title;
   String titleKy;
   String description;
@@ -16,7 +15,6 @@ class Post {
 
    Post(
      this.id,
-     this.categoryId,
      this.title,
      this.titleKy,
      this.description,
@@ -27,7 +25,6 @@ class Post {
    );
 
  int get  getPostId => id;
- int get getPostCategoryId => categoryId;
  String get getPostTitle => title;
  String get getPostTitleKy => titleKy;
  String get getPostDescription => description;
@@ -39,7 +36,6 @@ class Post {
 
  Post.fromMap(dynamic obj) {
     this.id = obj["id"];
-    this.categoryId = obj["category_id"];
     this.title = obj["title"];
     this.titleKy = obj["title_ky"];
     this.description = obj["description"];
@@ -52,7 +48,6 @@ class Post {
     var map = new Map<String, dynamic>();
 
     map["id"] = id;
-    map["category_id"] = categoryId;
     map["title"] = title;
     map["title_ky"] = titleKy;
     map["description"] = description;

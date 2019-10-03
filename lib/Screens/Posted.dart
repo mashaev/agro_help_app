@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:agro_help_app/models/post_category.dart';
 import 'package:flutter/material.dart';
 
 import '../helpers/database_helper.dart';
@@ -27,9 +28,9 @@ class Posted extends StatefulWidget {
 
 class _PostedState extends State<Posted> {
   DatabaseHelper db = DatabaseHelper();
-  Future<List<Post>> localCtgs;
+  Future<List<PostCategory>> localCtgs;
   Future<bool> serverCtgsSaved;
-  bool fetchSuccessful = false;
+  bool fetchSuccessful = false; 
 
   // List<Category> list = [];
   bool localShowed = false;
@@ -43,7 +44,7 @@ class _PostedState extends State<Posted> {
     super.initState();
     // db.initDb();
     // fetchSuccessful = fetchCategory() as bool;
-    localCtgs = db.getPostModelData(widget.categoryID);
+    localCtgs = db.getPostCategoryModelData(widget.categoryID);
 
     serverCtgsSaved = fetchPost();
   }
@@ -86,7 +87,7 @@ class _PostedState extends State<Posted> {
     if (!serverShowed) {
       serverCtgsSaved.then((saved) {
         setState(() {
-          localCtgs = db.getPostModelData(widget.categoryID);
+          localCtgs = db.getPostCategoryModelData(widget.categoryID);
         });
         localShowed = false;
       });
@@ -96,7 +97,7 @@ class _PostedState extends State<Posted> {
     return finalWidget;
   }
 
-  Widget _listV(context, List<Post> ctg) {
+  Widget _listV(context, List<PostCategory> ctg) {
     return ListView(
       children: ctg
           .map(
@@ -110,14 +111,15 @@ class _PostedState extends State<Posted> {
                     color: Colors.blue,
                     child: ListTile(
                       title: Text(
-                        item.getPostTitle,
+                        widget.postTitle,
                         style: TextStyle(
                             color: Colors.white,
                             fontSize: 20,
                             fontWeight: FontWeight.bold),
                       ),
                       subtitle: Text(
-                        item.getPostTitleKy,
+                        //item.getPostTitleKy,
+                        'asdf',
                         style: TextStyle(
                             color: Colors.white,
                             fontSize: 20,

@@ -3,6 +3,7 @@ import 'dart:async';
 
 import 'package:agro_help_app/models/Category.dart';
 import '../models/Post.dart';
+import '../models/post_category.dart';
 
 import 'package:flutter/services.dart';
 import 'package:path/path.dart';
@@ -52,8 +53,10 @@ class DatabaseHelper {
     if (result.length == 0) {
       dbCategory.insert("category", cat.toMap());
     } else {
+      String ctgTitle = cat.getTitle.replaceAll("'","''");
+      String ctgTitleKy = cat.getTitleKy.replaceAll("'","''");
       sql =
-          "UPDATE category SET title = '${cat.getTitle}', title_ky = '${cat.getTitleKy}', parent_id = ${cat.getparentId}, sort = ${cat.getSort}, updated_at = ${cat.getUpdatedAt} WHERE id = ${cat.getId}";
+          "UPDATE category SET title = '$ctgTitle', title_ky = '$ctgTitleKy', parent_id = ${cat.getparentId}, sort = ${cat.getSort}, updated_at = ${cat.getUpdatedAt} WHERE id = ${cat.getId}";
       dbCategory.rawUpdate(sql);
     }
 
@@ -77,7 +80,7 @@ class DatabaseHelper {
 
     List<Category> list = result.map((item) {
       return Category.fromMap(item);
-    }).toList();
+    }).toList(); 
 
     //print(result);
     return list;
@@ -113,28 +116,53 @@ class DatabaseHelper {
       dbCategory.insert("post", cat.toMap());
     } else {
       sql =
-          "UPDATE category SET title = '${cat.getPostTitle}', title_ky = '${cat.getPostTitleKy}', category_id = ${cat.getPostCategoryId}, sort = ${cat.getPostSort}, updated_at = ${cat.getPostUpdatedAt} WHERE id = ${cat.getPostId}";
+          "UPDATE category SET title = '${cat.getPostTitle}', title_ky = '${cat.getPostTitleKy}', sort = ${cat.getPostSort}, updated_at = ${cat.getPostUpdatedAt} WHERE id = ${cat.getPostId}";
       dbCategory.rawUpdate(sql);
     }
 
     return true;
   }
 
-  Future<List<Post>> getPostModelData(int categoryId) async {
+  // Future<List<Post>> getPostModelData(int categoryId) async {
+  //   var dbCategory = await db;
+  //   String sql;
+  //   sql = "SELECT * FROM post_category WHERE category_id = $categoryId";
+
+  //   var result = await dbCategory.rawQuery(sql);
+  //   if (result.length == 0) {
+  //     print("table is empty");
+  //     return null;
+  //   }
+  //   List<Post> list = result.map((item) {
+  //     return Post.fromMap(item);
+  //   }).toList();
+
+  //   //print(result);
+  //   return list;
+  // }
+
+   Future<List<PostCategory>> getPostCategoryModelData(int categoryId) async {
     var dbCategory = await db;
     String sql;
-    sql = "SELECT * FROM post WHERE category_id = $categoryId";
-
+    sql = "SELECT b.title, c.title, c.title_ky FROM post_category a JOIN category b ON a.category_id = b.id JOIN post c ON a.post_id = c.Id";
+    
     var result = await dbCategory.rawQuery(sql);
     if (result.length == 0) {
       print("table is empty");
       return null;
     }
-    List<Post> list = result.map((item) {
-      return Post.fromMap(item);
+    List<PostCategory> list = result.map((item) {
+      return PostCategory.fromMap(item);
     }).toList();
 
     //print(result);
     return list;
   }
+
+
+// SELECT category.id, category.title, post.id, post.title
+// FROM category
+// JOIN post_category ON category.id = post_category.category_id
+// JOIN post ON post_category.post_id = post.id
+
 }
