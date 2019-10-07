@@ -28,7 +28,7 @@ class Posted extends StatefulWidget {
 
 class _PostedState extends State<Posted> {
   DatabaseHelper db = DatabaseHelper();
-  Future<List<PostCategory>> localCtgs;
+  Future<List<PostCategory>> localPostCtgs;
   Future<bool> serverCtgsSaved;
   bool fetchSuccessful = false; 
 
@@ -44,9 +44,10 @@ class _PostedState extends State<Posted> {
     super.initState();
     // db.initDb();
     // fetchSuccessful = fetchCategory() as bool;
-    localCtgs = db.getPostCategoryModelData(widget.categoryID);
+    localPostCtgs = db.getPostCategoryModelData(widget.categoryID);
 
     serverCtgsSaved = fetchPost();
+
   }
 
   Future<Null> _refreshPost(BuildContext context) async {
@@ -76,7 +77,7 @@ class _PostedState extends State<Posted> {
   
   Widget _showBody(BuildContext context) {
     if (!localShowed) {
-      localCtgs.then((lctg) {
+      localPostCtgs.then((lctg) {
         setState(() {
           finalWidget = _listV(context, lctg);
         });
@@ -87,13 +88,13 @@ class _PostedState extends State<Posted> {
     if (!serverShowed) {
       serverCtgsSaved.then((saved) {
         setState(() {
-          localCtgs = db.getPostCategoryModelData(widget.categoryID);
+          localPostCtgs = db.getPostCategoryModelData(widget.categoryID);
         });
         localShowed = false;
       });
       serverShowed = true;
     }
-
+   
     return finalWidget;
   }
 
@@ -170,7 +171,7 @@ Future<bool> fetchPost() async {
           saved = db.syncPostData(cat);
           // saved.then((val) {});
         }
-
+          
         return saved;
         /* return (result as List)
             .map<Category>((json) => new Category.fromJson(json))

@@ -1,5 +1,9 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:async';
+
+import 'package:http/http.dart' as http;
+
 
 import 'package:agro_help_app/models/Category.dart';
 import '../models/Post.dart';
@@ -29,7 +33,7 @@ class DatabaseHelper {
     // Directory documentsDirectory = await getApplicationDocumentsDirectory();
 
     var databasesPath = await getDatabasesPath();
-    String path = join(databasesPath, "asset_database4.db");
+    String path = join(databasesPath, "asset_database5.db");
     await deleteDatabase(path);
 
     // Load database from asset and copy
@@ -62,6 +66,49 @@ class DatabaseHelper {
 
     return true;
   }
+
+  Future<bool> fetchCategory() async {
+  try {
+    final result = await InternetAddress.lookup('agro.prosoft.kg');
+    if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+      DatabaseHelper db = DatabaseHelper();
+      Future<bool> saved;
+
+      final int maxUpdatedAt = await db.getMaxTimestamp('category');
+
+      final response = await http.get(
+          'https://agro.prosoft.kg/api/categories/list?updated_later=$maxUpdatedAt');
+
+      if (response.statusCode == 200) {
+        // If server returns an OK response, parse the JSON
+        final result = json.decode(response.body);
+
+        List resultList = result as List;
+        if (resultList.length == 0) {
+          print('nothing to update');
+        }
+
+        for (var item in resultList) {
+          var cat = Category.fromJson(item);
+          print('updated_value: ${cat.getTitle}');
+          saved = db.syncCategoryData(cat);
+          // saved.then((val) {});
+        }
+
+        return saved;
+        /* return (result as List)
+            .map<Category>((json) => new Category.fromJson(json))
+            .toList(); */
+      } else {
+        // If that response was not OK, throw an error.
+        return null;
+      }
+    }
+  } on SocketException catch (_) {
+    return null;
+  }
+  return null;
+}
 
   Future<List<Category>> getCategoryModelData(int parentId) async {
     var dbCategory = await db;
@@ -106,17 +153,17 @@ class DatabaseHelper {
   }
 
 
-   Future<bool> syncPostData(Post cat) async {
+   Future<bool> syncPostData(Post post) async {
     var dbCategory = await db;
 
     String sql;
-    sql = "SELECT * FROM post WHERE id = ${cat.getPostId}";
+    sql = "SELECT * FROM post WHERE id = ${post.getPostId}";
     var result = await dbCategory.rawQuery(sql);
     if (result.length == 0) {
-      dbCategory.insert("post", cat.toMap());
+      dbCategory.insert("post", post.toMap());
     } else {
       sql =
-          "UPDATE category SET title = '${cat.getPostTitle}', title_ky = '${cat.getPostTitleKy}', sort = ${cat.getPostSort}, updated_at = ${cat.getPostUpdatedAt} WHERE id = ${cat.getPostId}";
+          "UPDATE category SET title = '${post.getPostTitle}', title_ky = '${post.getPostTitleKy}', sort = ${post.getPostSort}, updated_at = ${post.getPostUpdatedAt} WHERE id = ${post.getPostId}";
       dbCategory.rawUpdate(sql);
     }
 
@@ -160,9 +207,6 @@ class DatabaseHelper {
   }
 
 
-// SELECT category.id, category.title, post.id, post.title
-// FROM category
-// JOIN post_category ON category.id = post_category.category_id
-// JOIN post ON post_category.post_id = post.id
+  
 
 }
