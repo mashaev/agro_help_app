@@ -1,10 +1,8 @@
-import 'package:agro_help_app/models/post_category.dart';
 import 'package:flutter/material.dart';
 
 import '../helpers/database_helper.dart';
 
-import '../models/Post.dart';
-import '../models/post_category.dart';
+import '../models/PostCategory.dart';
 
 class PostDetailScreen extends StatelessWidget {
   int postId;

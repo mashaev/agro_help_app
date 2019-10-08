@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/Category.dart';
-import '../Screens/Posted.dart';
+import '../Screens/Postes.dart';
 // import '../Screens/Posts.dart';
 
 import '../helpers/database_helper.dart';

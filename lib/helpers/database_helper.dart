@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 
 import 'package:agro_help_app/models/Category.dart';
 import '../models/Post.dart';
-import '../models/post_category.dart';
+import '../models/PostCategory.dart';
 
 import 'package:flutter/services.dart';
 import 'package:path/path.dart';
