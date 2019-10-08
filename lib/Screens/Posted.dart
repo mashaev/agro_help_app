@@ -1,16 +1,12 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:agro_help_app/models/post_category.dart';
 import 'package:flutter/material.dart';
 
 import '../helpers/database_helper.dart';
 
-import 'package:http/http.dart' as http;
 
-import 'dart:convert';
 
-import '../models/Post.dart';
 
 class Posted extends StatefulWidget {
  int categoryID;
@@ -42,17 +38,20 @@ class _PostedState extends State<Posted> {
   @override
   initState() {
     super.initState();
-    // db.initDb();
+     db.initDb();
     // fetchSuccessful = fetchCategory() as bool;
     localPostCtgs = db.getPostCategoryModelData(widget.categoryID);
 
-    serverCtgsSaved = fetchPost();
+    serverCtgsSaved = db.fetchPost();
 
+    db.fetchPostCategory();
+
+   
   }
 
   Future<Null> _refreshPost(BuildContext context) async {
     print('let runnnnnnnnnnn');
-    fetchPost().then((val) {
+    db.fetchPost().then((val) {
       serverShowed = false;
       _showBody(context);
     });
@@ -65,7 +64,7 @@ class _PostedState extends State<Posted> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Категории'),
+        title: Text('Post'),
       ),
       
       body: RefreshIndicator(
@@ -144,45 +143,3 @@ class _PostedState extends State<Posted> {
   }
 }
 
-Future<bool> fetchPost() async {
-  try {
-    final result = await InternetAddress.lookup('agro.prosoft.kg');
-    if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-      DatabaseHelper db = DatabaseHelper();
-      Future<bool> saved;
-
-      final int maxUpdatedAt = await db.getMaxTimestamp('post');
-
-      final response = await http.get(
-          'https://agro.prosoft.kg/api/posts/list?updated_later=$maxUpdatedAt');
-
-      if (response.statusCode == 200) {
-        // If server returns an OK response, parse the JSON
-        final result = json.decode(response.body);
-
-        List resultList = result as List;
-        if (resultList.length == 0) {
-          print('nothing to update');
-        }
-
-        for (var item in resultList) {
-          var cat = Post.fromMap(item);
-          // print('updated_value: ${cat.getTitle}');
-          saved = db.syncPostData(cat);
-          // saved.then((val) {});
-        }
-          
-        return saved;
-        /* return (result as List)
-            .map<Category>((json) => new Category.fromJson(json))
-            .toList(); */
-      } else {
-        // If that response was not OK, throw an error.
-        return null;
-      }
-    }
-  } on SocketException catch (_) {
-    return null;
-  }
-  return null;
-}

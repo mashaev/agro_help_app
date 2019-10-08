@@ -33,7 +33,7 @@ class DatabaseHelper {
     // Directory documentsDirectory = await getApplicationDocumentsDirectory();
 
     var databasesPath = await getDatabasesPath();
-    String path = join(databasesPath, "asset_database5.db");
+    String path = join(databasesPath, "asset_database6.db");
     await deleteDatabase(path);
 
     // Load database from asset and copy
@@ -163,30 +163,74 @@ class DatabaseHelper {
       dbCategory.insert("post", post.toMap());
     } else {
       sql =
-          "UPDATE category SET title = '${post.getPostTitle}', title_ky = '${post.getPostTitleKy}', sort = ${post.getPostSort}, updated_at = ${post.getPostUpdatedAt} WHERE id = ${post.getPostId}";
+          "UPDATE post SET title = '${post.getPostTitle}', title_ky = '${post.getPostTitleKy}', sort = ${post.getPostSort}, updated_at = ${post.getPostUpdatedAt} WHERE id = ${post.getPostId}";
       dbCategory.rawUpdate(sql);
     }
 
     return true;
   }
 
-  // Future<List<Post>> getPostModelData(int categoryId) async {
-  //   var dbCategory = await db;
-  //   String sql;
-  //   sql = "SELECT * FROM post_category WHERE category_id = $categoryId";
 
-  //   var result = await dbCategory.rawQuery(sql);
-  //   if (result.length == 0) {
-  //     print("table is empty");
-  //     return null;
-  //   }
-  //   List<Post> list = result.map((item) {
-  //     return Post.fromMap(item);
-  //   }).toList();
+  Future<bool> fetchPost() async {
+  try {
+    final result = await InternetAddress.lookup('agro.prosoft.kg');
+    if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+      DatabaseHelper db = DatabaseHelper();
+      Future<bool> saved;
 
-  //   //print(result);
-  //   return list;
-  // }
+      final int maxUpdatedAt = await db.getMaxTimestamp('post');
+
+      final response = await http.get(
+          'https://agro.prosoft.kg/api/posts/list?updated_later=$maxUpdatedAt');
+
+      if (response.statusCode == 200) {
+        // If server returns an OK response, parse the JSON
+        final result = json.decode(response.body);
+
+        List resultList = result as List;
+        if (resultList.length == 0) {
+          print('nothing to update');
+        }
+
+        for (var item in resultList) {
+          var cat = Post.fromMap(item);
+          // print('updated_value: ${cat.getTitle}');
+          saved = db.syncPostData(cat);
+          // saved.then((val) {});
+        }
+          
+        return saved;
+        /* return (result as List)
+            .map<Category>((json) => new Category.fromJson(json))
+            .toList(); */
+      } else {
+        // If that response was not OK, throw an error.
+        return null;
+      }
+    }
+  } on SocketException catch (_) {
+    return null;
+  }
+  return null;
+}
+
+  Future<List<Post>> getPostModelData(int categoryId) async {
+    var dbCategory = await db;
+    String sql;
+    sql = "SELECT * FROM post WHERE id = $categoryId";
+
+    var result = await dbCategory.rawQuery(sql);
+    if (result.length == 0) {
+      print("table is empty");
+      return null;
+    }
+    List<Post> list = result.map((item) {
+      return Post.fromMap(item);
+    }).toList();
+
+    //print(result);
+    return list;
+  }
 
    Future<List<PostCategory>> getPostCategoryModelData(int categoryId) async {
     var dbCategory = await db;
@@ -207,6 +251,64 @@ class DatabaseHelper {
   }
 
 
-  
+  Future<bool> fetchPostCategory() async {
+  try {
+    final result = await InternetAddress.lookup('agro.prosoft.kg');
+    if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+      DatabaseHelper db = DatabaseHelper();
+      Future<bool> saved;
+
+      final int maxUpdatedAt = await db.getMaxTimestamp('post_category');
+
+      final response = await http.get(
+          'https://agro.prosoft.kg/api/post-category/list?updated_later=$maxUpdatedAt');
+
+      if (response.statusCode == 200) {
+        // If server returns an OK response, parse the JSON
+        final result = json.decode(response.body);
+
+        List resultList = result as List;
+        if (resultList.length == 0) {
+          print('nothing to update');
+        }
+
+        for (var item in resultList) {
+          var postCtg = PostCategory.fromMap(item);
+          // print('updated_value: ${cat.getTitle}');
+          saved = db.syncPostCategoryData(postCtg);
+          // saved.then((val) {});
+        }
+          
+        return saved;
+        /* return (result as List)
+            .map<Category>((json) => new Category.fromJson(json))
+            .toList(); */
+      } else {
+        // If that response was not OK, throw an error.
+        return null;
+      }
+    }
+  } on SocketException catch (_) {
+    return null;
+  }
+  return null;
+}
+
+Future<bool> syncPostCategoryData(PostCategory postCtg) async {
+    var dbCategory = await db;
+    
+    String sql;
+    sql = "SELECT * FROM post_category WHERE id = ${postCtg.getPostCategoryId}";
+    var result = await dbCategory.rawQuery(sql);
+    if (result.length == 0) {
+      dbCategory.insert("post_category", postCtg.toMap());
+    } else {
+      sql =
+          "UPDATE post_category SET category_id = '${postCtg.getCategoryId}', post_id = '${postCtg.getPostId}',  updated_at = ${postCtg.getPostCategoryUpdatedAt} WHERE id = ${postCtg.getPostCategoryId}";
+      dbCategory.rawUpdate(sql);
+    }
+
+    return true;
+  }
 
 }

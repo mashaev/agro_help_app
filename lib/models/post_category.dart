@@ -1,26 +1,26 @@
 import 'dart:convert';
 
 class PostCategory {
-  int postCategoryid;
+  int id;
   int postId;
   int categoryId;
   int updatedAt;
 
   PostCategory(
-    this.postCategoryid,
+    this.id,
     this.postId,
     this.categoryId,
     this.updatedAt,
   );
 
-  int get getPostCategoryId => postCategoryid;
+  int get getPostCategoryId => id;
   int get getPostId => postId;
   int get getCategoryId => categoryId;
 
   int get getPostCategoryUpdatedAt => updatedAt;
 
   PostCategory.fromMap(dynamic obj) {
-    this.postCategoryid = obj["post_category_id"];
+    this.id = obj["post_category_id"];
     this.postId = obj["post_id"];
     this.categoryId = obj["category_id"];
     this.updatedAt = obj["updated_at"];
@@ -29,7 +29,7 @@ class PostCategory {
   Map<String, dynamic> toMap() {
     var map = new Map<String, dynamic>();
 
-    map["post_category_id"] = postCategoryid;
+    map["id"] = id;
     map["post_id"] = postId;
     map["category_id"] = categoryId;
     map["updated_at"] = updatedAt;

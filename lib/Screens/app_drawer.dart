@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import './categories.dart';
-import './Posts.dart';
 
 class AppDrawer extends StatelessWidget {
 
