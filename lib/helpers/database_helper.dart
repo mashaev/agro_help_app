@@ -8,6 +8,7 @@ import '../models/post_category.dart';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:agro_help_app/resources/session.dart';
 //import 'package:path_provider/path_provider.dart';
 
 class DatabaseHelper {
@@ -53,8 +54,8 @@ class DatabaseHelper {
     if (result.length == 0) {
       dbCategory.insert("category", cat.toMap());
     } else {
-      String ctgTitle = cat.getTitle.replaceAll("'","''");
-      String ctgTitleKy = cat.getTitleKy.replaceAll("'","''");
+      String ctgTitle = cat.getTitle.replaceAll("'", "''");
+      String ctgTitleKy = cat.getTitleKy.replaceAll("'", "''");
       sql =
           "UPDATE category SET title = '$ctgTitle', title_ky = '$ctgTitleKy', parent_id = ${cat.getparentId}, sort = ${cat.getSort}, updated_at = ${cat.getUpdatedAt} WHERE id = ${cat.getId}";
       dbCategory.rawUpdate(sql);
@@ -66,21 +67,21 @@ class DatabaseHelper {
   Future<List<Category>> getCategoryModelData(int parentId) async {
     var dbCategory = await db;
     String sql;
-    // sql = "SELECT * FROM category WHERE parent_id = $parentId";
 
-    sql = "SELECT * FROM category WHERE parent_id = $parentId";
-
-    if (parentId == null)
+    if (parentId == null) {
       sql = "SELECT * FROM category WHERE parent_id IS NULL";
+    } else {
+      sql = "SELECT * FROM category WHERE parent_id = $parentId";
+    }
 
     var result = await dbCategory.rawQuery(sql);
-    print('db_result');
-    //print(result);
+    cprint('getCategoryModelData($parentId) $result');
+
     if (result.length == 0) return null;
 
     List<Category> list = result.map((item) {
       return Category.fromMap(item);
-    }).toList(); 
+    }).toList();
 
     //print(result);
     return list;
@@ -105,8 +106,7 @@ class DatabaseHelper {
     return result[0]['MAX(updated_at)'];
   }
 
-
-   Future<bool> syncPostData(Post cat) async {
+  Future<bool> syncPostData(Post cat) async {
     var dbCategory = await db;
 
     String sql;
@@ -141,11 +141,12 @@ class DatabaseHelper {
   //   return list;
   // }
 
-   Future<List<PostCategory>> getPostCategoryModelData(int categoryId) async {
+  Future<List<PostCategory>> getPostCategoryModelData(int categoryId) async {
     var dbCategory = await db;
     String sql;
-    sql = "SELECT b.title, c.title, c.title_ky FROM post_category a JOIN category b ON a.category_id = b.id JOIN post c ON a.post_id = c.Id";
-    
+    sql =
+        "SELECT b.title, c.title, c.title_ky FROM post_category a JOIN category b ON a.category_id = b.id JOIN post c ON a.post_id = c.Id";
+
     var result = await dbCategory.rawQuery(sql);
     if (result.length == 0) {
       print("table is empty");
@@ -159,6 +160,16 @@ class DatabaseHelper {
     return list;
   }
 
+  void test() async {
+    var dbc = await db;
+    String sql;
+    sql = "SELECT * FROM category";
+    //sql = "SELECT * FROM category WHERE parent_id IS NULL";
+    //sql = "SELECT * FROM category WHERE parent_id = $parentId";
+
+    var result = await dbc.rawQuery(sql);
+    cprint('ctgs $result');
+  }
 
 // SELECT category.id, category.title, post.id, post.title
 // FROM category

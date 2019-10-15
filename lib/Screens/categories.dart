@@ -1,19 +1,13 @@
 import 'dart:async';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
-
 import '../helpers/database_helper.dart';
-
 import 'package:http/http.dart' as http;
-
 import 'dart:convert';
-
 import '../Screens/Screen2.dart';
-
 import '../models/Category.dart';
-
 import '../Screens/app_drawer.dart';
+import 'package:agro_help_app/resources/session.dart';
 
 class Categories extends StatefulWidget {
   final int parentId;
@@ -44,6 +38,8 @@ class _CategoriesState extends State<Categories> {
     super.initState();
     // db.initDb();
     // fetchSuccessful = fetchCategory() as bool;
+
+    //db.test();
     localCtgs = db.getCategoryModelData(widget.parentId);
 
     serverCtgsSaved = fetchCategory();
@@ -86,10 +82,12 @@ class _CategoriesState extends State<Categories> {
 
     if (!serverShowed) {
       serverCtgsSaved.then((saved) {
-        setState(() {
-          localCtgs = db.getCategoryModelData(widget.parentId);
-        });
-        localShowed = false;
+        if (saved) {
+          setState(() {
+            localCtgs = db.getCategoryModelData(widget.parentId);
+          });
+          localShowed = false;
+        }
       });
       serverShowed = true;
     }
@@ -99,47 +97,56 @@ class _CategoriesState extends State<Categories> {
 
   Widget _listV(context, List<Category> ctg) {
     return ListView(
-      children: ctg
-          .map(
-            (item) => Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: InkWell(
-                child: Container(
-                  height: 100,
-                  color: Colors.blue,
-                  child: ListTile(
-                    contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-                    title: Text(
-                      item.getTitle,
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    subtitle: Text(
-                      item.getTitleKy,
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500),
-                    ),
-                    trailing: Icon(
-                      Icons.arrow_forward_ios,
-                      size: 30.0,
-                    ),
+      children: ctg.map(
+        (item) {
+          String title = item.getTitle;
+          String titleKy = item.getTitleKy;
+          if (title == null) {
+            title = 'noTitle ${item.id}';
+          }
+          if (titleKy == null) {
+            titleKy = 'noTitleKy ${item.id}';
+          }
+          return Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: InkWell(
+              child: Container(
+                height: 100,
+                color: Colors.blue,
+                child: ListTile(
+                  contentPadding:
+                      EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                  title: Text(
+                    title,
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  subtitle: Text(
+                    titleKy,
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500),
+                  ),
+                  trailing: Icon(
+                    Icons.arrow_forward_ios,
+                    size: 30.0,
                   ),
                 ),
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              Screen2(item.getId, item.getTitle)));
-                },
               ),
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            Screen2(item.getId, item.getTitle)));
+              },
             ),
-          )
-          .toList(),
+          );
+        },
+      ).toList(),
     );
   }
 }
@@ -152,6 +159,7 @@ Future<bool> fetchCategory() async {
       Future<bool> saved;
 
       final int maxUpdatedAt = await db.getMaxTimestamp('category');
+      cprint('maxUpdatedAt $maxUpdatedAt');
 
       final response = await http.get(
           'https://agro.prosoft.kg/api/categories/list?updated_later=$maxUpdatedAt');
@@ -162,12 +170,12 @@ Future<bool> fetchCategory() async {
 
         List resultList = result as List;
         if (resultList.length == 0) {
-          print('nothing to update');
+          cprint('nothing to update');
         }
 
         for (var item in resultList) {
           var cat = Category.fromJson(item);
-          print('updated_value: ${cat.getTitle}');
+          cprint('updated_value: ${cat.getTitle}');
           saved = db.syncCategoryData(cat);
           // saved.then((val) {});
         }
@@ -178,11 +186,11 @@ Future<bool> fetchCategory() async {
             .toList(); */
       } else {
         // If that response was not OK, throw an error.
-        return null;
+        return false;
       }
     }
   } on SocketException catch (_) {
-    return null;
+    return false;
   }
-  return null;
+  return false;
 }
