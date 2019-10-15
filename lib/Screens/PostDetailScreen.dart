@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 
 import '../helpers/database_helper.dart';
 
-import '../models/PostCategory.dart';
+import '../models/Post.dart';
 
 class PostDetailScreen extends StatelessWidget {
   int postId;
   String title;
   String description;
 
-  PostDetailScreen(this.postId, this.title, this.description);
+  PostDetailScreen( this.postId,this.title, this.description);
 
   DatabaseHelper db = DatabaseHelper();
   @override
@@ -18,7 +18,7 @@ class PostDetailScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(title),
       ),
-      body: FutureBuilder<List<PostCategory>>(
+      body: FutureBuilder<List<Post>>(
         future: db.getPostCategoryModelData(postId),
         builder: (context, snapshot) {
           if (!snapshot.hasData)
@@ -37,7 +37,7 @@ class PostDetailScreen extends StatelessWidget {
                           color: Colors.blue,
                           child: Center(
                             child: Text(
-                              title,
+                              item.description,
                               style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 20,

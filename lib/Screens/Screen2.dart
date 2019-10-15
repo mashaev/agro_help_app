@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/Category.dart';
-import '../Screens/Postes.dart';
-// import '../Screens/Posts.dart';
+import '../Screens/Posts.dart';
 
 import '../helpers/database_helper.dart';
 
@@ -65,7 +64,7 @@ class Screen2 extends StatelessWidget {
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
-                                      Posted(item.getId, item.title)));
+                                      Posts(item.getId, item.title)));
                         }
                       },
                     ),

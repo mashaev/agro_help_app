@@ -33,7 +33,7 @@ class DatabaseHelper {
     // Directory documentsDirectory = await getApplicationDocumentsDirectory();
 
     var databasesPath = await getDatabasesPath();
-    String path = join(databasesPath, "asset_database6.db");
+    String path = join(databasesPath, "asset_database9.db");
     await deleteDatabase(path);
 
     // Load database from asset and copy
@@ -192,7 +192,10 @@ class DatabaseHelper {
           print('nothing to update');
         }
 
+        // print('fetched posts: ${resultList.first}');
+
         for (var item in resultList) {
+          
           var cat = Post.fromMap(item);
           // print('updated_value: ${cat.getTitle}');
           saved = db.syncPostData(cat);
@@ -214,37 +217,40 @@ class DatabaseHelper {
   return null;
 }
 
-  Future<List<Post>> getPostModelData(int categoryId) async {
+  // Future<List<Post>> getPostModelData(int categoryId) async {
+  //   var dbCategory = await db;
+  //   String sql;
+  //   sql = "SELECT * FROM post WHERE id = $categoryId";
+
+  //   var result = await dbCategory.rawQuery(sql);
+  //   if (result.length == 0) {
+  //     print("table is empty");
+  //     return null;
+  //   }
+  //   List<Post> list = result.map((item) {
+  //     return Post.fromMap(item);
+  //   }).toList();
+
+  //   //print(result);
+  //   return list;
+  // }
+   
+   Future<List<Post>> getPostCategoryModelData(int categoryId) async {
     var dbCategory = await db;
     String sql;
-    sql = "SELECT * FROM post WHERE id = $categoryId";
-
-    var result = await dbCategory.rawQuery(sql);
-    if (result.length == 0) {
-      print("table is empty");
-      return null;
-    }
-    List<Post> list = result.map((item) {
-      return Post.fromMap(item);
-    }).toList();
-
-    //print(result);
-    return list;
-  }
-
-   Future<List<PostCategory>> getPostCategoryModelData(int categoryId) async {
-    var dbCategory = await db;
-    String sql;
-    sql = "SELECT b.title, c.title, c.title_ky FROM post_category a JOIN category b ON a.category_id = b.id JOIN post c ON a.post_id = c.Id";
+    sql = "SELECT * FROM post p JOIN post_category pc ON pc.post_id = p.id WHERE pc.category_id = $categoryId";
     
     var result = await dbCategory.rawQuery(sql);
     if (result.length == 0) {
       print("table is empty");
       return null;
     }
-    List<PostCategory> list = result.map((item) {
-      return PostCategory.fromMap(item);
+    print('here12q: ${result[1]}');
+    List<Post> list = result.map((item) {
+      return Post.fromMap(item);
     }).toList();
+
+    print('suka: ${list.first.title}');
 
     //print(result);
     return list;

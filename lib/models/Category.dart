@@ -1,18 +1,5 @@
-import 'dart:convert';
 
-// Category categoryFromJson(String str) {
-//     final jsonData = json.decode(str);
-//     return Category.fromJson(jsonData);
-// }
 
-// String categoryToJson(Category data) {
-//     final dyn = data.toJson();
-//     return json.encode(dyn);
-// }
-
-// Future<http.Response> fetchCategory() {
-//   return http.get('https://jsonplaceholder.typicode.com/posts/1');
-// }
 
 class Category {
   int id;

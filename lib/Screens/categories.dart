@@ -39,11 +39,13 @@ class _CategoriesState extends State<Categories> {
   @override
   initState() {
     super.initState();
-    // db.initDb();
+     db.initDb();
     // fetchSuccessful = fetchCategory() as bool;
     localCtgs = db.getCategoryModelData(widget.parentId);
 
     serverCtgsSaved = db.fetchCategory();
+    db.fetchPost();
+    db.fetchPostCategory();
   }
 
   Future<Null> _refreshCategories(BuildContext context) async {
