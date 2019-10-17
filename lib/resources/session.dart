@@ -1,7 +1,7 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ansicolor/ansicolor.dart';
-//export 'strings.dart';
-//export 'styles.dart';
+export 'strings.dart';
+export 'styles.dart';
 
 SharedPreferences session;
 

@@ -1,9 +1,6 @@
 import 'dart:async';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import '../helpers/database_helper.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import '../Screens/Screen2.dart';
 import '../models/Category.dart';
 import '../Screens/app_drawer.dart';
@@ -36,20 +33,40 @@ class _CategoriesState extends State<Categories> {
   @override
   initState() {
     super.initState();
-    // db.initDb();
+    //db.initDb();
     // fetchSuccessful = fetchCategory() as bool;
 
-    //db.test();
-    localCtgs = db.getCategoryModelData(widget.parentId);
+    db.test();
+    sendDelete();
+    localFetch();
+    serverCtgsSaved = db.fetchCategory();
+    db.fetchPost();
+    db.fetchPostCategory();
+    String lang = session.getString('language') ?? 'ru';
+    cprint('lang $lang');
+  }
 
-    serverCtgsSaved = fetchCategory();
+  Future<int> sendDelete() {
+    db.deleteDeleted('post');
+    db.deleteDeleted('post_category');
+    return db.deleteDeleted('category');
+  }
+
+  void localFetch() {
+    localCtgs = db.getCategoryModelData(widget.parentId);
   }
 
   Future<Null> _refreshCategories(BuildContext context) async {
-    print('let runnnnnnnnnnn');
-    fetchCategory().then((val) {
-      serverShowed = false;
-      _showBody(context);
+    db.fetchCategory().then((val) {
+      cprint('refres');
+      var del = sendDelete();
+      del.then((v) {
+        localFetch();
+        setState(() {
+          localShowed = false;
+        });
+      });
+      //_showBody(context);
     });
 
     return;
@@ -62,7 +79,7 @@ class _CategoriesState extends State<Categories> {
       appBar: AppBar(
         title: Text('Категории'),
       ),
-      drawer: AppDrawer(widget.parentId),
+      drawer: AppDrawer(),
       body: RefreshIndicator(
           key: refreshKey,
           onRefresh: () => _refreshCategories(context),
@@ -73,9 +90,11 @@ class _CategoriesState extends State<Categories> {
   Widget _showBody(BuildContext context) {
     if (!localShowed) {
       localCtgs.then((lctg) {
-        setState(() {
-          finalWidget = _listV(context, lctg);
-        });
+        if (lctg != null) {
+          setState(() {
+            finalWidget = _listV(context, lctg);
+          });
+        }
       });
       localShowed = true;
     }
@@ -100,13 +119,7 @@ class _CategoriesState extends State<Categories> {
       children: ctg.map(
         (item) {
           String title = item.getTitle;
-          String titleKy = item.getTitleKy;
-          if (title == null) {
-            title = 'noTitle ${item.id}';
-          }
-          if (titleKy == null) {
-            titleKy = 'noTitleKy ${item.id}';
-          }
+          //String titleKy = item.getTitleKy;
           return Padding(
             padding: const EdgeInsets.all(10.0),
             child: InkWell(
@@ -116,20 +129,7 @@ class _CategoriesState extends State<Categories> {
                 child: ListTile(
                   contentPadding:
                       EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-                  title: Text(
-                    title,
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  subtitle: Text(
-                    titleKy,
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500),
-                  ),
+                  title: txtSubhead(context, title, Colors.white),
                   trailing: Icon(
                     Icons.arrow_forward_ios,
                     size: 30.0,
@@ -149,48 +149,4 @@ class _CategoriesState extends State<Categories> {
       ).toList(),
     );
   }
-}
-
-Future<bool> fetchCategory() async {
-  try {
-    final result = await InternetAddress.lookup('agro.prosoft.kg');
-    if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-      DatabaseHelper db = DatabaseHelper();
-      Future<bool> saved;
-
-      final int maxUpdatedAt = await db.getMaxTimestamp('category');
-      cprint('maxUpdatedAt $maxUpdatedAt');
-
-      final response = await http.get(
-          'https://agro.prosoft.kg/api/categories/list?updated_later=$maxUpdatedAt');
-
-      if (response.statusCode == 200) {
-        // If server returns an OK response, parse the JSON
-        final result = json.decode(response.body);
-
-        List resultList = result as List;
-        if (resultList.length == 0) {
-          cprint('nothing to update');
-        }
-
-        for (var item in resultList) {
-          var cat = Category.fromJson(item);
-          cprint('updated_value: ${cat.getTitle}');
-          saved = db.syncCategoryData(cat);
-          // saved.then((val) {});
-        }
-
-        return saved;
-        /* return (result as List)
-            .map<Category>((json) => new Category.fromJson(json))
-            .toList(); */
-      } else {
-        // If that response was not OK, throw an error.
-        return false;
-      }
-    }
-  } on SocketException catch (_) {
-    return false;
-  }
-  return false;
 }
