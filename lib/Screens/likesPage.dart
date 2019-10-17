@@ -1,54 +1,39 @@
-import 'dart:async';
 import 'package:agro_help_app/Screens/PostDetailScreen.dart';
-
-import '../models/Post.dart';
 import 'package:flutter/material.dart';
 
 import '../helpers/database_helper.dart';
 
-class Posts extends StatefulWidget {
-  final int categoryID;
-  final String categoryTitle;
-
-  Posts(this.categoryID, this.categoryTitle);
-
-  @override
-  State<StatefulWidget> createState() {
-    return _PostsState();
-  }
-}
-
-class _PostsState extends State<Posts> {
-  DatabaseHelper db = DatabaseHelper();
-  Future<List<Post>> localPostCtgs;
-  Widget finalWidget = Center(child: CircularProgressIndicator());
-
-  @override
-  initState() {
-    super.initState();
-    localPostCtgs = db.getPostCategoryModelList(widget.categoryID);
-  }
+class LikesPage extends StatelessWidget {
+  final DatabaseHelper dbHelper = DatabaseHelper();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.categoryTitle),
+        title: Text('Likes'),
       ),
       body: _showBody(context),
     );
   }
 
   Widget _showBody(BuildContext context) {
-    localPostCtgs.then((lctg) {
-      setState(() {
-        finalWidget = _listV(context, lctg);
-      });
-    });
-    return finalWidget;
+    return FutureBuilder(
+      future: dbHelper.getFavorites(),
+      builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
+        if (snapshot.hasData) {
+          return _listV(context, snapshot.data);
+        }
+        return Center(child: CircularProgressIndicator());
+      },
+    );
   }
 
-  Widget _listV(context, List<Post> ctg) {
+  Widget _listV(context, List ctg) {
+    if (ctg.length == 0) {
+      return Center(
+        child: Text('netu likov'),
+      );
+    }
     return ListView(
       children: ctg
           .map(
@@ -62,18 +47,11 @@ class _PostsState extends State<Posts> {
                     color: Colors.blue,
                     child: ListTile(
                       title: Text(
-                        item.getPostTitle,
+                        item['name'],
                         style: TextStyle(
                             color: Colors.white,
                             fontSize: 20,
                             fontWeight: FontWeight.bold),
-                      ),
-                      subtitle: Text(
-                        item.getPostTitleKy,
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w500),
                       ),
                     ),
                   ),
@@ -83,7 +61,7 @@ class _PostsState extends State<Posts> {
                     context,
                     MaterialPageRoute(
                       builder: (context) =>
-                          PostDetailScreen(item.id, widget.categoryTitle),
+                          PostDetailScreen(item['post_id'], item['name']),
                     ),
                   );
                 },
