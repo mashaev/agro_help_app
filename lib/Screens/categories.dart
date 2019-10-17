@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 
 import '../helpers/database_helper.dart';
 
-
-
 import '../Screens/Screen2.dart';
 
 import '../models/Category.dart';
@@ -16,7 +14,7 @@ class Categories extends StatefulWidget {
   final int parentId;
 
   Categories(this.parentId);
-
+ 
   @override
   State<StatefulWidget> createState() {
     return _CategoriesState();
@@ -39,8 +37,8 @@ class _CategoriesState extends State<Categories> {
   @override
   initState() {
     super.initState();
-     db.initDb();
-    // fetchSuccessful = fetchCategory() as bool;
+   // db.initDb();
+    
     localCtgs = db.getCategoryModelData(widget.parentId);
 
     serverCtgsSaved = db.fetchCategory();
@@ -107,7 +105,8 @@ class _CategoriesState extends State<Categories> {
                   height: 100,
                   color: Colors.blue,
                   child: ListTile(
-                    contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                    contentPadding:
+                        EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
                     title: Text(
                       item.getTitle,
                       style: TextStyle(
@@ -142,5 +141,3 @@ class _CategoriesState extends State<Categories> {
     );
   }
 }
-
-
