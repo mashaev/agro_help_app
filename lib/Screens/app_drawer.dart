@@ -10,33 +10,22 @@ class AppDrawer extends StatelessWidget {
       child: Column(
         children: <Widget>[
           AppBar(
-            title: Text('Agro Helper!'),
+            title: Text(Strings.t('agro_helper')),
             automaticallyImplyLeading: false,
           ),
           Divider(),
           ListTile(
             leading: Icon(Icons.category),
-            title: Text('Categories'),
+            title: Text(Strings.t('categories')),
             onTap: () {
-              Navigator.pop(context);
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => Categories(0)));
+              Navigator.of(context).pushNamedAndRemoveUntil(
+                  '/Categories', (Route<dynamic> route) => false);
             },
           ),
           Divider(),
           ListTile(
-            leading: Icon(Icons.bookmark),
-            title: Text('Post'),
-            // onTap: () {
-            //   Navigator.of(context).pushReplacementNamed(
-            //     OrdersScreen.routeName,
-            //   );
-            // },
-          ),
-          Divider(),
-          ListTile(
             leading: Icon(Icons.favorite),
-            title: Text('Likes'),
+            title: Text(Strings.t('saveds')),
             onTap: () {
               Navigator.pop(context);
               Navigator.push(context,

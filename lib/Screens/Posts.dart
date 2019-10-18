@@ -5,6 +5,7 @@ import '../models/Post.dart';
 import 'package:flutter/material.dart';
 
 import '../helpers/database_helper.dart';
+import 'package:agro_help_app/resources/session.dart';
 
 class Posts extends StatefulWidget {
   final int categoryID;
@@ -49,48 +50,50 @@ class _PostsState extends State<Posts> {
   }
 
   Widget _listV(context, List<Post> ctg) {
+    if (ctg == null || ctg.length == 0) {
+      return Center(
+        child: Text(
+          Strings.t('notFound'),
+          style: TextStyle(fontSize: 18.0, color: Colors.grey),
+        ),
+      );
+    }
     return ListView(
-      children: ctg
-          .map(
-            (item) => Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: InkWell(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(30.0),
-                  child: Container(
-                    height: 150,
-                    color: Colors.blue,
-                    child: ListTile(
-                      title: Text(
-                        item.getPostTitle,
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold),
-                      ),
-                      subtitle: Text(
-                        item.getPostTitleKy,
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w500),
-                      ),
-                    ),
+      children: ctg.map((item) {
+        String title = item.getPostTitle;
+        if (session.getString('language') == 'ky') {
+          title = item.getPostTitleKy;
+        }
+        return Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: InkWell(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(30.0),
+              child: Container(
+                height: 150,
+                color: Colors.blue,
+                child: ListTile(
+                  title: Text(
+                    title,
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold),
                   ),
                 ),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          PostDetailScreen(item.id, widget.categoryTitle),
-                    ),
-                  );
-                },
               ),
             ),
-          )
-          .toList(),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => PostDetailScreen(item.id, title),
+                ),
+              );
+            },
+          ),
+        );
+      }).toList(),
     );
   }
 }

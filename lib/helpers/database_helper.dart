@@ -35,7 +35,7 @@ class DatabaseHelper {
     cprint('initDB is run');
 
     var databasesPath = await getDatabasesPath();
-    String path = join(databasesPath, "asset_database1.db");
+    String path = join(databasesPath, "asset_database2.db");
     var exists = await databaseExists(path);
     //await deleteDatabase(path);
     if (!exists) {
@@ -92,7 +92,7 @@ class DatabaseHelper {
 
           List resultList = result as List;
           if (resultList.length == 0) {
-            cprint('nothing to update');
+            cprint('nothing to update category');
             return false;
           }
 
@@ -129,7 +129,7 @@ class DatabaseHelper {
     }
 
     var result = await dbCategory.rawQuery(sql);
-    cprint('getCategoryModelData($parentId) $result');
+    //cprint('getCategoryModelData($parentId) $result');
 
     if (result.length == 0) return null;
 
@@ -199,7 +199,7 @@ class DatabaseHelper {
 
           List resultList = result as List;
           if (resultList.length == 0) {
-            print('nothing to update');
+            cprint('nothing to update post');
           }
 
           // print('fetched posts: ${resultList.first}');
@@ -248,7 +248,7 @@ class DatabaseHelper {
     var dbCategory = await db;
     String sql;
     sql =
-        "SELECT * FROM post p JOIN post_category pc ON pc.post_id = p.id WHERE pc.category_id = $categoryId";
+        "SELECT *,p.id as pid FROM post p JOIN post_category pc ON pc.post_id = p.id WHERE pc.category_id = $categoryId";
 
     var result = await dbCategory.rawQuery(sql);
     if (result.length == 0) {
@@ -260,16 +260,16 @@ class DatabaseHelper {
       return Post.fromMap(item);
     }).toList();
 
-    print('suka: ${list.first.title}');
+    cprint('suka: $list');
 
     //print(result);
     return list;
   }
 
-  Future<Post> getPostCategoryModelData(int postId) async {
+  Future<Post> getPostModelData(int postId) async {
     var dbCategory = await db;
     String sql;
-    sql = "SELECT * FROM post WHERE id = $postId";
+    sql = "SELECT *,id as pid FROM post WHERE id = $postId";
 
     var result = await dbCategory.rawQuery(sql);
     if (result.length == 0) {
@@ -301,7 +301,7 @@ class DatabaseHelper {
 
           List resultList = result as List;
           if (resultList.length == 0) {
-            print('nothing to update');
+            cprint('nothing to update postCategory');
           }
 
           for (var item in resultList) {
@@ -359,7 +359,7 @@ class DatabaseHelper {
 
           List resultList = result as List;
           if (resultList.length == 0) {
-            cprint('nothing to delete');
+            cprint('nothing to delete $tbl');
           } else {
             for (var item in resultList) {
               String fld = tbl + '_id';
@@ -401,17 +401,21 @@ class DatabaseHelper {
   Future<List> getFavorites() async {
     var myDb = await db;
     return myDb.rawQuery(
-        "SELECT f.post_id,p.name FROM favorite f JOIN post p ON f.post_id=p.id");
+        "SELECT f.post_id,p.name, p.name_ky FROM favorite f JOIN post p ON f.post_id=p.id");
   }
 
   void test() async {
     var dbc = await db;
     String sql;
-    sql = "SELECT * FROM favorite";
+    sql = "SELECT id FROM post";
     //sql = "SELECT * FROM category WHERE parent_id IS NULL";
     //sql = "SELECT * FROM category WHERE parent_id = $parentId";
 
     var result = await dbc.rawQuery(sql);
-    cprint('favorites $result');
+    cprint('test $result');
+  }
+
+  void fake() async {
+    var dbc = await db;
   }
 }

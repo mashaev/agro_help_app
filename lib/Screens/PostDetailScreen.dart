@@ -21,11 +21,12 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
   Future<Post> futurePost;
   Future<List> futureFav;
   IconData icn;
+  String save = 'save';
 
   @override
   initState() {
     super.initState();
-    futurePost = db.getPostCategoryModelData(widget.postId);
+    futurePost = db.getPostModelData(widget.postId);
     futureFav = db.getFavorite(widget.postId);
   }
 
@@ -44,30 +45,30 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
           if (!snapshot.hasData)
             return Center(child: CircularProgressIndicator());
 
+          String title = snapshot.data.title;
+          String desc = snapshot.data.description;
+          if (session.getString('language') == 'ky') {
+            title = snapshot.data.titleKy;
+            desc = snapshot.data.descriptionKy;
+          }
+
           return ListView(
             children: [
               Padding(
                 padding: EdgeInsets.all(16.0),
-                child: txtTitle(context, snapshot.data.title, null),
+                child: txtTitle(context, title, null),
               ),
               Padding(
                 child: HtmlWidget(
-                  snapshot.data.description,
+                  desc,
                   webViewJs: false,
                   bodyPadding: EdgeInsets.all(0),
                   textStyle: TextStyle(fontSize: 16.0),
                 ),
                 padding: EdgeInsets.symmetric(horizontal: 16.0),
               ),
-              Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 16.0, vertical: 22.0),
-                  child: FlatButton.icon(
-                    icon: Icon(icn),
-                    color: Colors.blue,
-                    label: Text('Like'),
-                    onPressed: like,
-                  )),
+              SizedBox(height: 30.0)
+              //_likeBtn(),
               //Html(data: snapshot.data.description)
             ],
           );
@@ -76,15 +77,31 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     );
   }
 
+  /* Widget _likeBtn() {
+    return Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 22.0),
+        child: Row(
+          children: <Widget>[
+            FlatButton(
+              color: Colors.grey[200],
+              child: Text(Strings.t(save)),
+              onPressed: like,
+            ),
+            SizedBox()
+          ],
+        ));
+  } */
+
   void like() {
-    Future<int> save = db.saveFavorite(widget.postId);
-    save.then((v) {
-      print('v is $v');
+    Future<int> savef = db.saveFavorite(widget.postId);
+    savef.then((v) {
       setState(() {
         if (v == 1) {
           icn = Icons.favorite;
+          save = 'saved';
         } else {
           icn = Icons.favorite_border;
+          save = 'save';
         }
       });
     });
@@ -96,15 +113,17 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
       builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
         if (snapshot.hasData) {
           if (icn == null) {
-            if (snapshot.data.length > 0) {
-              cprint('db has');
-              icn = Icons.favorite;
-            } else {
-              cprint('db empty');
-              icn = Icons.favorite_border;
-            }
+            Future.delayed(Duration(seconds: 1), () {
+              setState(() {
+                if (snapshot.data.length > 0) {
+                  icn = Icons.favorite;
+                  save = 'saved';
+                } else {
+                  icn = Icons.favorite_border;
+                }
+              });
+            });
           }
-
           return IconButton(
             icon: Icon(icn),
             onPressed: like,

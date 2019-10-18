@@ -18,7 +18,7 @@ class Categories extends StatefulWidget {
 }
 
 class _CategoriesState extends State<Categories> {
-  DatabaseHelper db = DatabaseHelper();
+  DatabaseHelper dbHelper = DatabaseHelper();
   Future<List<Category>> localCtgs;
   Future<bool> serverCtgsSaved;
   bool fetchSuccessful = false;
@@ -33,32 +33,30 @@ class _CategoriesState extends State<Categories> {
   @override
   initState() {
     super.initState();
+    //cprint('categories initState');
     //db.initDb();
     // fetchSuccessful = fetchCategory() as bool;
 
-    db.test();
+    //dbHelper.test();
     sendDelete();
     localFetch();
-    serverCtgsSaved = db.fetchCategory();
-    db.fetchPost();
-    db.fetchPostCategory();
-    String lang = session.getString('language') ?? 'ru';
-    cprint('lang $lang');
+    serverCtgsSaved = dbHelper.fetchCategory();
+    dbHelper.fetchPost();
+    dbHelper.fetchPostCategory();
   }
 
   Future<int> sendDelete() {
-    db.deleteDeleted('post');
-    db.deleteDeleted('post_category');
-    return db.deleteDeleted('category');
+    dbHelper.deleteDeleted('post');
+    dbHelper.deleteDeleted('post_category');
+    return dbHelper.deleteDeleted('category');
   }
 
   void localFetch() {
-    localCtgs = db.getCategoryModelData(widget.parentId);
+    localCtgs = dbHelper.getCategoryModelData(widget.parentId);
   }
 
   Future<Null> _refreshCategories(BuildContext context) async {
-    db.fetchCategory().then((val) {
-      cprint('refres');
+    dbHelper.fetchCategory().then((val) {
       var del = sendDelete();
       del.then((v) {
         localFetch();
@@ -75,9 +73,10 @@ class _CategoriesState extends State<Categories> {
   // localCtgs = serverCtgs;
   @override
   Widget build(BuildContext context) {
+    //cprint('categories build');
     return Scaffold(
       appBar: AppBar(
-        title: Text('Категории'),
+        title: Text(Strings.t('categories')),
       ),
       drawer: AppDrawer(),
       body: RefreshIndicator(
@@ -103,7 +102,7 @@ class _CategoriesState extends State<Categories> {
       serverCtgsSaved.then((saved) {
         if (saved) {
           setState(() {
-            localCtgs = db.getCategoryModelData(widget.parentId);
+            localCtgs = dbHelper.getCategoryModelData(widget.parentId);
           });
           localShowed = false;
         }
@@ -119,6 +118,9 @@ class _CategoriesState extends State<Categories> {
       children: ctg.map(
         (item) {
           String title = item.getTitle;
+          if (session.getString('language') == 'ky') {
+            title = item.getTitleKy;
+          }
           //String titleKy = item.getTitleKy;
           return Padding(
             padding: const EdgeInsets.all(10.0),
@@ -140,8 +142,7 @@ class _CategoriesState extends State<Categories> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) =>
-                            Screen2(item.getId, item.getTitle)));
+                        builder: (context) => Screen2(item.getId, title)));
               },
             ),
           );

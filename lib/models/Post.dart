@@ -1,6 +1,3 @@
-
-
-
 class Post {
   int id;
   String title;
@@ -11,30 +8,20 @@ class Post {
 
   int updatedAt;
 
+  Post(this.id, this.title, this.titleKy, this.description, this.descriptionKy,
+      this.sort, this.updatedAt);
 
-   Post(
-     this.id,
-     this.title,
-     this.titleKy,
-     this.description,
-     this.descriptionKy,
-     this.sort,
+  int get getPostId => id;
+  String get getPostTitle => title;
+  String get getPostTitleKy => titleKy;
+  String get getPostDescription => description;
+  String get getPostDescriptionKy => descriptionKy;
+  int get getPostSort => sort;
 
-     this.updatedAt
-   );
+  int get getPostUpdatedAt => updatedAt;
 
- int get  getPostId => id;
- String get getPostTitle => title;
- String get getPostTitleKy => titleKy;
- String get getPostDescription => description;
- String get getPostDescriptionKy => descriptionKy;
- int get getPostSort => sort;
-
- int get getPostUpdatedAt => updatedAt;
- 
-
- Post.fromMap(dynamic obj) {
-    this.id = obj["id"];
+  Post.fromMap(dynamic obj) {
+    this.id = obj["pid"];
     this.title = obj["name"];
     this.titleKy = obj["name_ky"];
     this.description = obj["content"];
@@ -56,5 +43,4 @@ class Post {
 
     return map;
   }
-
 }
