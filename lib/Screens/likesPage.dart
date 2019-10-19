@@ -2,6 +2,7 @@ import 'package:agro_help_app/Screens/PostDetailScreen.dart';
 import 'package:flutter/material.dart';
 
 import '../helpers/database_helper.dart';
+import 'package:agro_help_app/resources/session.dart';
 
 class LikesPage extends StatelessWidget {
   final DatabaseHelper dbHelper = DatabaseHelper();
@@ -10,7 +11,7 @@ class LikesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Likes'),
+        title: Text(Strings.t('saveds')),
       ),
       body: _showBody(context),
     );
@@ -31,8 +32,15 @@ class LikesPage extends StatelessWidget {
   Widget _listV(context, List ctg) {
     if (ctg.length == 0) {
       return Center(
-        child: Text('netu likov'),
+        child: Text(
+          Strings.t('notFound'),
+          style: TextStyle(fontSize: 18.0, color: Colors.grey),
+        ),
       );
+    }
+    String tfield = 'name';
+    if (session.getString('language') == 'ky') {
+      tfield = 'name_ky';
     }
     return ListView(
       children: ctg
@@ -47,7 +55,7 @@ class LikesPage extends StatelessWidget {
                     color: Colors.blue,
                     child: ListTile(
                       title: Text(
-                        item['name'],
+                        item[tfield],
                         style: TextStyle(
                             color: Colors.white,
                             fontSize: 20,
@@ -61,7 +69,7 @@ class LikesPage extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (context) =>
-                          PostDetailScreen(item['post_id'], item['name']),
+                          PostDetailScreen(item['post_id'], item[tfield]),
                     ),
                   );
                 },

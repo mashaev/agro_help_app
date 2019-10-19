@@ -1,4 +1,3 @@
-
 class PostCategory {
   int id;
   int postId;
@@ -19,7 +18,7 @@ class PostCategory {
   int get getPostCategoryUpdatedAt => updatedAt;
 
   PostCategory.fromMap(dynamic obj) {
-    this.id = obj["post_category_id"];
+    this.id = obj["id"];
     this.postId = obj["post_id"];
     this.categoryId = obj["category_id"];
     this.updatedAt = obj["updated_at"];
@@ -35,8 +34,4 @@ class PostCategory {
 
     return map;
   }
-
- 
-
-
 }

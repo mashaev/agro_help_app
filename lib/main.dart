@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 
 import './Screens/categories.dart';
 import 'package:agro_help_app/resources/session.dart';
+import 'helpers/database_helper.dart';
 //import './Screens/testPage.dart';
 
 void main() async {
@@ -19,9 +20,9 @@ class AgroHelp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'AgroHelp',
-      home: Categories(null),
+      //home: Categories(null),
       //home: TestPage(),
-      //home: SplashScreen(),
+      home: SplashScreen(),
       routes: <String, WidgetBuilder>{
         '/Categories': (BuildContext context) => Categories(null),
       },
@@ -46,18 +47,20 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  DatabaseHelper dbHelper = DatabaseHelper();
   startTime() async {
     var _duration = new Duration(seconds: 3);
     return new Timer(_duration, navigationPage);
   }
 
   void navigationPage() {
-    Navigator.of(context).pushReplacementNamed('/test');
+    Navigator.of(context).pushReplacementNamed('/Categories');
   }
 
   @override
   void initState() {
     super.initState();
+    dbHelper.fake();
     startTime();
   }
 
