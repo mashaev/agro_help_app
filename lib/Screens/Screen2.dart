@@ -24,55 +24,53 @@ class Screen2 extends StatelessWidget {
         builder: (context, snapshot) {
           if (!snapshot.hasData)
             return Center(
-              child: Text(
-                Strings.t('notFound'),
-                style: TextStyle(fontSize: 34, fontWeight: FontWeight.bold),
-              ),
+              child: grey18(Strings.t('notFound')),
             );
 
-          return ListView(
-            children: snapshot.data.map((item) {
-              String title = item.getTitle;
-              if (session.getString('language') == 'ky') {
-                title = item.getTitleKy;
-              }
-              return Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: InkWell(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(30.0),
-                    child: Container(
-                      height: 120,
-                      color: Colors.blue,
-                      child: Center(
-                        child: Text(
-                          title,
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ),
+          List<Widget> wlist = [const SizedBox(height: 5.0)];
+          String lng = session.getString('language');
+          snapshot.data.forEach((item) {
+            String title;
+            if (lng == 'ky') {
+              title = item.getTitleKy;
+            } else {
+              title = item.getTitle;
+            }
+            wlist.add(Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+              child: InkWell(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(5.0),
+                  child: Container(
+                    height: 100,
+                    color: clr(context, 'accent'),
+                    child: Center(
+                      child: txtTitle(context, title, Colors.white),
                     ),
                   ),
-                  onTap: () async {
-                    var result = await db.getCategoryModelData(item.getId);
-                    if (result != null) {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  Screen2(item.getId, title)));
-                    } else {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => Posts(item.getId, title)));
-                    }
-                  },
                 ),
-              );
-            }).toList(),
+                onTap: () async {
+                  var result = await db.getCategoryModelData(item.getId);
+                  if (result != null) {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => Screen2(item.getId, title)));
+                  } else {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => Posts(item.getId, title)));
+                  }
+                },
+              ),
+            ));
+          });
+
+          wlist.add(const SizedBox(height: 5.0));
+          return ListView(
+            children: wlist,
           );
         },
       ),

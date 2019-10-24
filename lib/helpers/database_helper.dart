@@ -252,15 +252,13 @@ class DatabaseHelper {
 
     var result = await dbCategory.rawQuery(sql);
     if (result.length == 0) {
-      print("table is empty");
+      cprint("table is empty");
       return null;
     }
     //print('here12q: ${result[1]}');
     List<Post> list = result.map((item) {
       return Post.fromMap(item);
     }).toList();
-
-    cprint('suka: $list');
 
     //print(result);
     return list;
@@ -407,7 +405,7 @@ class DatabaseHelper {
   void test() async {
     var dbc = await db;
     String sql;
-    sql = "SELECT id FROM post";
+    sql = "SELECT id, name FROM post";
     //sql = "SELECT * FROM category WHERE parent_id IS NULL";
     //sql = "SELECT * FROM category WHERE parent_id = $parentId";
 

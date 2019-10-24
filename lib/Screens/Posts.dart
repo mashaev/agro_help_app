@@ -52,37 +52,24 @@ class _PostsState extends State<Posts> {
   Widget _listV(context, List<Post> ctg) {
     if (ctg == null || ctg.length == 0) {
       return Center(
-        child: Text(
-          Strings.t('notFound'),
-          style: TextStyle(fontSize: 18.0, color: Colors.grey),
-        ),
+        child: grey18(Strings.t('notFound')),
       );
     }
-    return ListView(
-      children: ctg.map((item) {
-        String title = item.getPostTitle;
-        if (session.getString('language') == 'ky') {
-          title = item.getPostTitleKy;
-        }
-        return Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: InkWell(
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(30.0),
-              child: Container(
-                height: 150,
-                color: Colors.blue,
-                child: ListTile(
-                  title: Text(
-                    title,
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
-            ),
+    List<Widget> wlist = [const SizedBox(height: 5.0)];
+    ctg.forEach((item) {
+      String title = item.getPostTitle;
+      if (session.getString('language') == 'ky') {
+        title = item.getPostTitleKy;
+      }
+      wlist.add(Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey),
+            borderRadius: BorderRadius.circular(5.0),
+          ),
+          child: ListTile(
+            title: txtSubhead(context, title, clr(context, 'primary')),
             onTap: () {
               Navigator.push(
                 context,
@@ -92,8 +79,12 @@ class _PostsState extends State<Posts> {
               );
             },
           ),
-        );
-      }).toList(),
+        ),
+      ));
+    });
+    wlist.add(const SizedBox(height: 5.0));
+    return ListView(
+      children: wlist,
     );
   }
 }

@@ -31,7 +31,9 @@ class Strings {
       'saved': 'Сохранено',
       'saveds': 'Сохраненные',
       'categories': 'Категории',
-      'notFound': 'Ничего не найдено'
+      'notFound': 'Ничего не найдено',
+      'aboutUs': 'О нас',
+      'siteKVS': 'Сайт СПТССК «КВС»'
     },
     'ky': {
       'login': 'Логин',
@@ -59,7 +61,9 @@ class Strings {
       'saved': 'Сакталды',
       'saveds': 'Сакталгандар',
       'categories': 'Категориялар',
-      'notFound': 'Эчнерсе табылбады'
+      'notFound': 'Эчнерсе табылбады',
+      'aboutUs': 'Биз жөнүндө',
+      'siteKVS': 'Сайт СПТССК «КВС»'
     }
   };
 }

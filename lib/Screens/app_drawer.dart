@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import './categories.dart';
 import 'package:agro_help_app/Screens/likesPage.dart';
 import 'package:agro_help_app/resources/session.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AppDrawer extends StatelessWidget {
   @override
@@ -13,7 +13,6 @@ class AppDrawer extends StatelessWidget {
             title: Text(Strings.t('agro_helper')),
             automaticallyImplyLeading: false,
           ),
-          Divider(),
           ListTile(
             leading: Icon(Icons.category),
             title: Text(Strings.t('categories')),
@@ -24,7 +23,7 @@ class AppDrawer extends StatelessWidget {
           ),
           Divider(),
           ListTile(
-            leading: Icon(Icons.favorite),
+            leading: Icon(Icons.star),
             title: Text(Strings.t('saveds')),
             onTap: () {
               Navigator.pop(context);
@@ -34,6 +33,20 @@ class AppDrawer extends StatelessWidget {
           ),
           Divider(),
           selectLang(context),
+          Divider(),
+          ListTile(
+            leading: Container(
+                width: 24.0,
+                height: 24.0,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                      image: AssetImage("assets/images/48grey.png"),
+                      fit: BoxFit.cover),
+                )),
+            trailing: Icon(Icons.exit_to_app),
+            title: Text(Strings.t('siteKVS')),
+            onTap: _launchURL,
+          ),
           // ListTile(
           //   leading: Icon(Icons.edit),
           //   title: Text('Manage Products'),
@@ -59,6 +72,15 @@ class AppDrawer extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  _launchURL() async {
+    const url = 'https://kvseeds.com/';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 
   Widget selectLang(BuildContext context) {

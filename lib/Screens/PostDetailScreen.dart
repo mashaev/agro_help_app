@@ -97,10 +97,10 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     savef.then((v) {
       setState(() {
         if (v == 1) {
-          icn = Icons.favorite;
+          icn = Icons.star;
           save = 'saved';
         } else {
-          icn = Icons.favorite_border;
+          icn = Icons.star_border;
           save = 'save';
         }
       });
@@ -116,10 +116,10 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
             Future.delayed(Duration(seconds: 1), () {
               setState(() {
                 if (snapshot.data.length > 0) {
-                  icn = Icons.favorite;
+                  icn = Icons.star;
                   save = 'saved';
                 } else {
-                  icn = Icons.favorite_border;
+                  icn = Icons.star_border;
                 }
               });
             });

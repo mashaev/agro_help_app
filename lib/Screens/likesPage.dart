@@ -38,45 +38,38 @@ class LikesPage extends StatelessWidget {
         ),
       );
     }
+    List<Widget> wlist = [const SizedBox(height: 5.0)];
+
     String tfield = 'name';
     if (session.getString('language') == 'ky') {
       tfield = 'name_ky';
     }
-    return ListView(
-      children: ctg
-          .map(
-            (item) => Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: InkWell(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(30.0),
-                  child: Container(
-                    height: 150,
-                    color: Colors.blue,
-                    child: ListTile(
-                      title: Text(
-                        item[tfield],
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ),
+    ctg.forEach((item) {
+      wlist.add(Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey),
+            borderRadius: BorderRadius.circular(5.0),
+          ),
+          child: ListTile(
+            title: txtSubhead(context, item[tfield], clr(context, 'primary')),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      PostDetailScreen(item['post_id'], item[tfield]),
                 ),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          PostDetailScreen(item['post_id'], item[tfield]),
-                    ),
-                  );
-                },
-              ),
-            ),
-          )
-          .toList(),
+              );
+            },
+          ),
+        ),
+      ));
+    });
+    wlist.add(const SizedBox(height: 5.0));
+    return ListView(
+      children: wlist,
     );
   }
 }

@@ -35,3 +35,29 @@ Widget txtSubhead(BuildContext context, String t, Color clr) {
   }
   return Text(t, style: ts);
 }
+
+Widget txtHeadline(BuildContext context, String t, Color clr) {
+  TextStyle ts = Theme.of(context).textTheme.headline;
+  if (clr != null) {
+    ts = ts.copyWith(color: clr);
+  }
+  return Text(t, style: ts);
+}
+
+Color clr(BuildContext context, String sel) {
+  Color col;
+  if (sel == 'accent') {
+    col = Theme.of(context).accentColor;
+  } else if (sel == 'primary') {
+    col = Theme.of(context).primaryColor;
+  }
+  return col;
+}
+
+SizedBox sbox(double h, double w) {
+  return SizedBox(height: h, width: w);
+}
+
+Widget grey18(String t) {
+  return Text(t, style: TextStyle(fontSize: 18.0, color: Colors.grey));
+}

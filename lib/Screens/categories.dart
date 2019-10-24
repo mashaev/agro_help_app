@@ -37,7 +37,7 @@ class _CategoriesState extends State<Categories> {
     //db.initDb();
     // fetchSuccessful = fetchCategory() as bool;
 
-    //dbHelper.test();
+    dbHelper.test();
     sendDelete();
     localFetch();
     serverCtgsSaved = dbHelper.fetchCategory();
@@ -113,41 +113,55 @@ class _CategoriesState extends State<Categories> {
     return finalWidget;
   }
 
-  Widget _listV(context, List<Category> ctg) {
-    return ListView(
-      children: ctg.map(
-        (item) {
-          String title = item.getTitle;
-          if (session.getString('language') == 'ky') {
-            title = item.getTitleKy;
-          }
-          //String titleKy = item.getTitleKy;
-          return Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: InkWell(
-              child: Container(
-                height: 100,
-                color: Colors.blue,
-                child: ListTile(
-                  contentPadding:
-                      EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-                  title: txtSubhead(context, title, Colors.white),
-                  trailing: Icon(
-                    Icons.arrow_forward_ios,
-                    size: 30.0,
+  Widget _listV(context, List<Category> ctgs) {
+    List<Widget> wlist = [const SizedBox(height: 5.0)];
+    ctgs.forEach((item) {
+      String title = item.getTitle;
+      if (session.getString('language') == 'ky') {
+        title = item.getTitleKy;
+      }
+      //String titleKy = item.getTitleKy;
+      wlist.add(Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+        child: InkWell(
+          child: Container(
+              height: 100,
+              width: double.infinity,
+              child: Stack(
+                children: <Widget>[
+                  new Opacity(
+                    opacity: 0.4,
+                    child: ClipRRect(
+                      child: const ModalBarrier(
+                          dismissible: false, color: Colors.black),
+                      borderRadius: BorderRadius.circular(5.0),
+                    ),
                   ),
-                ),
+                  Center(
+                    child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 20.0),
+                        child: txtTitle(context, title, Colors.white)),
+                  )
+                ],
               ),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => Screen2(item.getId, title)));
-              },
-            ),
-          );
-        },
-      ).toList(),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5.0),
+                image: DecorationImage(
+                    image: AssetImage("assets/images/a2.jpg"),
+                    fit: BoxFit.cover),
+              )),
+          onTap: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => Screen2(item.getId, title)));
+          },
+        ),
+      ));
+    });
+    wlist.add(const SizedBox(height: 5.0));
+    return ListView(
+      children: wlist,
     );
   }
 }
