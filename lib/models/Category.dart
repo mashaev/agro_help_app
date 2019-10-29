@@ -8,6 +8,7 @@ class Category {
   String titleKy;
   int sort;
   int updated_at;
+  String picture;
 
   Category({
     this.id,
@@ -16,6 +17,7 @@ class Category {
     this.titleKy,
     this.sort,
     this.updated_at,
+    this.picture
   });
 
   factory Category.fromJson(Map<String, dynamic> json) {
@@ -27,6 +29,7 @@ class Category {
       // sort: json["sort"],
       sort: 0,
       updated_at: json["updated_at"],
+      picture: json["picture"],
     );
   }
 
@@ -37,6 +40,7 @@ class Category {
     this.titleKy = obj["title_ky"];
     this.sort = obj["sort"];
     this.updated_at = obj["updated_at"];
+    this.picture = obj["picture"];
   }
 
   Map<String, dynamic> toMap() {
@@ -48,6 +52,7 @@ class Category {
     map["title_ky"] = titleKy;
     map["sort"] = sort;
     map["updated_at"] = updated_at;
+    map["picture"] = picture;
 
     return map;
   }
@@ -64,6 +69,7 @@ class Category {
   int get getparentId => parentId;
   String get getTitle => title;
   String get getTitleKy => titleKy;
+  String get getPicture => picture;
   int get getSort => sort;
   int get getUpdatedAt => updated_at;
 }

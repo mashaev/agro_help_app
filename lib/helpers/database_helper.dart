@@ -35,7 +35,7 @@ class DatabaseHelper {
     cprint('initDB is run');
 
     var databasesPath = await getDatabasesPath();
-    String path = join(databasesPath, "asset_database2.db");
+    String path = join(databasesPath, "asset_database3.db");
     var exists = await databaseExists(path);
     //await deleteDatabase(path);
     if (!exists) {
@@ -64,11 +64,14 @@ class DatabaseHelper {
     if (result.length == 0) {
       dbCategory.insert("category", cat.toMap());
     } else {
-      String ctgTitle = cat.getTitle.replaceAll("'", "''");
+      /* String ctgTitle = cat.getTitle.replaceAll("'", "''");
       String ctgTitleKy = cat.getTitleKy.replaceAll("'", "''");
       sql =
           "UPDATE category SET title = '$ctgTitle', title_ky = '$ctgTitleKy', parent_id = ${cat.getparentId}, sort = ${cat.getSort}, updated_at = ${cat.getUpdatedAt} WHERE id = ${cat.getId}";
-      dbCategory.rawUpdate(sql);
+      dbCategory.rawUpdate(sql); */
+
+      dbCategory.update('category', cat.toMap(),
+          where: 'id= ?', whereArgs: [cat.getId]);
     }
 
     return true;
@@ -405,8 +408,8 @@ class DatabaseHelper {
   void test() async {
     var dbc = await db;
     String sql;
-    sql = "SELECT id, name FROM post";
-    //sql = "SELECT * FROM category WHERE parent_id IS NULL";
+    //sql = "SELECT id, name FROM post";
+    sql = "SELECT id,picture FROM category WHERE parent_id IS NULL";
     //sql = "SELECT * FROM category WHERE parent_id = $parentId";
 
     var result = await dbc.rawQuery(sql);

@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'package:agro_help_app/helpers/endpoints.dart';
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../helpers/database_helper.dart';
 import '../Screens/Screen2.dart';
 import '../models/Category.dart';
@@ -147,7 +149,8 @@ class _CategoriesState extends State<Categories> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(5.0),
                 image: DecorationImage(
-                    image: AssetImage("assets/images/a2.jpg"),
+                    //image: AssetImage("assets/images/a2.jpg"),
+                    image: CachedNetworkImageProvider(Endpoints.baseUrl+item.picture),
                     fit: BoxFit.cover),
               )),
           onTap: () {
