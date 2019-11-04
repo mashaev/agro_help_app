@@ -12,7 +12,7 @@ class Categories extends StatefulWidget {
   final int parentId;
 
   Categories(this.parentId);
- 
+
   @override
   State<StatefulWidget> createState() {
     return _CategoriesState();
@@ -39,7 +39,7 @@ class _CategoriesState extends State<Categories> {
     //db.initDb();
     // fetchSuccessful = fetchCategory() as bool;
 
-    dbHelper.test();
+    //dbHelper.test();
     sendDelete();
     localFetch();
     serverCtgsSaved = dbHelper.fetchCategory();
@@ -150,7 +150,8 @@ class _CategoriesState extends State<Categories> {
                 borderRadius: BorderRadius.circular(5.0),
                 image: DecorationImage(
                     //image: AssetImage("assets/images/a2.jpg"),
-                    image: CachedNetworkImageProvider(Endpoints.baseUrl+item.picture),
+                    image: CachedNetworkImageProvider(
+                        Endpoints.baseUrl + item.picture),
                     fit: BoxFit.cover),
               )),
           onTap: () {
