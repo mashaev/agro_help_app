@@ -39,7 +39,7 @@ class _CategoriesState extends State<Categories> {
     //db.initDb();
     // fetchSuccessful = fetchCategory() as bool;
 
-    dbHelper.test();
+    //dbHelper.test();
     sendDelete();
     localFetch();
     serverCtgsSaved = dbHelper.fetchCategory();
