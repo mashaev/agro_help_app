@@ -1,4 +1,4 @@
-package com.example.agro_help_app
+package com.kvseeds.agro_help_app
 
 import android.os.Bundle
 

@@ -22,6 +22,7 @@ class AgroHelp extends StatelessWidget {
       title: 'AgroHelp',
       //home: Categories(null),
       //home: TestPage(),
+      debugShowCheckedModeBanner: false,
       home: SplashScreen(),
       routes: <String, WidgetBuilder>{
         '/Categories': (BuildContext context) => Categories(null),

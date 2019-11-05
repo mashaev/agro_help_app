@@ -365,7 +365,7 @@ class DatabaseHelper {
             for (var item in resultList) {
               String fld = tbl + '_id';
               if (item[fld] != null) {
-                //cprint('delete ${item[fld]}');
+                cprint('delete ${item[fld]}');
                 var myDb = await db;
                 ret = myDb.delete(tbl, where: 'id = ?', whereArgs: [item[fld]]);
               }
@@ -408,8 +408,8 @@ class DatabaseHelper {
   void test() async {
     var dbc = await db;
     String sql;
-    //sql = "SELECT id, name FROM post";
-    sql = "SELECT id,picture FROM category WHERE parent_id IS NULL";
+    sql = "SELECT id, name FROM post";
+    //sql = "SELECT id,picture FROM category WHERE parent_id IS NULL";
     //sql = "SELECT * FROM category WHERE parent_id = $parentId";
 
     var result = await dbc.rawQuery(sql);

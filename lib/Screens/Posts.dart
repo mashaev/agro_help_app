@@ -20,14 +20,16 @@ class Posts extends StatefulWidget {
 }
 
 class _PostsState extends State<Posts> {
-  DatabaseHelper db = DatabaseHelper();
+  DatabaseHelper dbHelper = DatabaseHelper();
   Future<List<Post>> localPostCtgs;
   Widget finalWidget = Center(child: CircularProgressIndicator());
+  var refreshKey = GlobalKey<RefreshIndicatorState>();
+  bool postsShowed = false;
 
   @override
   initState() {
     super.initState();
-    localPostCtgs = db.getPostCategoryModelList(widget.categoryID);
+    localPostCtgs = dbHelper.getPostCategoryModelList(widget.categoryID);
   }
 
   @override
@@ -36,16 +38,24 @@ class _PostsState extends State<Posts> {
       appBar: AppBar(
         title: Text(widget.categoryTitle),
       ),
-      body: _showBody(context),
+      body: RefreshIndicator(
+          key: refreshKey,
+          onRefresh: () => _refreshPosts(context),
+          child: _showBody(context)),
+      backgroundColor: Colors.grey[350],
     );
   }
 
   Widget _showBody(BuildContext context) {
-    localPostCtgs.then((lctg) {
-      setState(() {
-        finalWidget = _listV(context, lctg);
+    if (!postsShowed) {
+      localPostCtgs.then((lctg) {
+        cprint('db then $lctg');
+        setState(() {
+          finalWidget = _listV(context, lctg);
+          postsShowed = true;
+        });
       });
-    });
+    }
     return finalWidget;
   }
 
@@ -65,9 +75,9 @@ class _PostsState extends State<Posts> {
         padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
         child: Container(
           decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey),
-            borderRadius: BorderRadius.circular(5.0),
-          ),
+              border: Border.all(color: Colors.grey),
+              borderRadius: BorderRadius.circular(5.0),
+              color: Colors.white),
           child: ListTile(
             title: txtSubhead(context, title, clr(context, 'primary')),
             onTap: () {
@@ -86,5 +96,23 @@ class _PostsState extends State<Posts> {
     return ListView(
       children: wlist,
     );
+  }
+
+  Future<Null> _refreshPosts(BuildContext context) async {
+    cprint('refresh');
+    dbHelper.deleteDeleted('post');
+    dbHelper.deleteDeleted('post_category');
+    Future<bool> server = dbHelper.fetchPost();
+    Future<bool> server2 = dbHelper.fetchPostCategory();
+    server.then((_) {
+      server2.then((_) {
+        setState(() {
+          cprint('set state on refresh');
+          localPostCtgs = dbHelper.getPostCategoryModelList(widget.categoryID);
+          postsShowed = false;
+        });
+      });
+    });
+    return;
   }
 }
