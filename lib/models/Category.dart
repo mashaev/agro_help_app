@@ -1,24 +1,20 @@
-
-
-
 class Category {
   int id;
   int parentId;
   String title;
   String titleKy;
   int sort;
-  int updated_at;
+  int updatedAt;
   String picture;
 
-  Category({
-    this.id,
-    this.parentId,
-    this.title,
-    this.titleKy,
-    this.sort,
-    this.updated_at,
-    this.picture
-  });
+  Category(
+      {this.id,
+      this.parentId,
+      this.title,
+      this.titleKy,
+      this.sort,
+      this.updatedAt,
+      this.picture});
 
   factory Category.fromJson(Map<String, dynamic> json) {
     return Category(
@@ -28,7 +24,7 @@ class Category {
       titleKy: json["name_ky"],
       // sort: json["sort"],
       sort: 0,
-      updated_at: json["updated_at"],
+      updatedAt: json["updated_at"],
       picture: json["picture"],
     );
   }
@@ -39,7 +35,7 @@ class Category {
     this.title = obj["title"];
     this.titleKy = obj["title_ky"];
     this.sort = obj["sort"];
-    this.updated_at = obj["updated_at"];
+    this.updatedAt = obj["updated_at"];
     this.picture = obj["picture"];
   }
 
@@ -51,7 +47,7 @@ class Category {
     map["title"] = title;
     map["title_ky"] = titleKy;
     map["sort"] = sort;
-    map["updated_at"] = updated_at;
+    map["updated_at"] = updatedAt;
     map["picture"] = picture;
 
     return map;
@@ -71,5 +67,5 @@ class Category {
   String get getTitleKy => titleKy;
   String get getPicture => picture;
   int get getSort => sort;
-  int get getUpdatedAt => updated_at;
+  int get getUpdatedAt => updatedAt;
 }

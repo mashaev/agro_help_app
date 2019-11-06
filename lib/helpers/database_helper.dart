@@ -39,6 +39,7 @@ class DatabaseHelper {
     var exists = await databaseExists(path);
     //await deleteDatabase(path);
     if (!exists) {
+      //cprint('create db');
       // Load database from asset and copy
       ByteData data = await rootBundle.load(join('assets', 'agrohelp.db'));
       List<int> bytes =
@@ -47,11 +48,14 @@ class DatabaseHelper {
       // Save copied asset to documents
       await Directory(databasesPath).create(recursive: true);
       await new File(path).writeAsBytes(bytes);
+    } else {
+      //cprint('db exists');
     }
     var theDb = await openDatabase(
       path,
       version: 1,
     );
+    //cprint('the db $theDb');
     return theDb;
   }
 
@@ -78,9 +82,11 @@ class DatabaseHelper {
   }
 
   Future<bool> fetchCategory() async {
+    //cprint('db fetchCategory');
     try {
       final result = await InternetAddress.lookup('agro.prosoft.kg');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        //cprint('lookup is good');
         DatabaseHelper db = DatabaseHelper();
         Future<bool> saved;
 
@@ -95,13 +101,13 @@ class DatabaseHelper {
 
           List resultList = result as List;
           if (resultList.length == 0) {
-            cprint('nothing to update category');
+            //cprint('nothing to update category');
             return false;
           }
 
           for (var item in resultList) {
             var cat = Category.fromJson(item);
-            cprint('updated_value: ${cat.getTitle}');
+            //cprint('updated_value: ${cat.getTitle}');
             saved = db.syncCategoryData(cat);
             // saved.then((val) {});
           }
@@ -114,8 +120,11 @@ class DatabaseHelper {
           // If that response was not OK, throw an error.
           return false;
         }
+      } else {
+        cprint('lookup failed');
       }
-    } on SocketException catch (_) {
+    } on SocketException catch (e) {
+      cprint('exception $e');
       return false;
     }
     return false;
@@ -155,11 +164,11 @@ class DatabaseHelper {
 
     //print(result);
     if (result.length == 0) {
-      cprint('db result.length is 0');
+      //cprint('db result.length is 0');
       return null;
     }
 
-    cprint('db $table result max upd: ${result[0]['MAX(updated_at)']}');
+    //cprint('db $table result max upd: ${result[0]['MAX(updated_at)']}');
     return result[0]['MAX(updated_at)'];
   }
 
@@ -202,7 +211,7 @@ class DatabaseHelper {
 
           List resultList = result as List;
           if (resultList.length == 0) {
-            cprint('nothing to update post');
+            //cprint('nothing to update post');
           }
 
           // print('fetched posts: ${resultList.first}');
@@ -302,7 +311,7 @@ class DatabaseHelper {
 
           List resultList = result as List;
           if (resultList.length == 0) {
-            cprint('nothing to update postCategory');
+            //cprint('nothing to update postCategory');
           }
 
           for (var item in resultList) {
@@ -360,12 +369,12 @@ class DatabaseHelper {
 
           List resultList = result as List;
           if (resultList.length == 0) {
-            cprint('nothing to delete $tbl');
+            //cprint('nothing to delete $tbl');
           } else {
             for (var item in resultList) {
               String fld = tbl + '_id';
               if (item[fld] != null) {
-                cprint('delete ${item[fld]}');
+                //cprint('delete ${item[fld]}');
                 var myDb = await db;
                 ret = myDb.delete(tbl, where: 'id = ?', whereArgs: [item[fld]]);
               }
@@ -417,6 +426,6 @@ class DatabaseHelper {
   }
 
   void fake() async {
-    var dbc = await db;
+    await db;
   }
 }
