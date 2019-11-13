@@ -81,6 +81,7 @@ class _PostsState extends State<Posts> {
           child: ListTile(
             title: txtSubhead(context, title, clr(context, 'primary')),
             onTap: () {
+              cprint('item.id ${item.id}');
               Navigator.push(
                 context,
                 MaterialPageRoute(

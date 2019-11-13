@@ -9,6 +9,8 @@ cprint(String msg) {
   AnsiPen pen = new AnsiPen()
     ..white()
     ..rgb(r: 1.0, g: 0.8, b: 0.2);
-
-  print(pen(msg));
+  assert(() {
+    print(pen(msg));
+    return true;
+  }());
 }

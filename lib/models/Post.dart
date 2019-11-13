@@ -20,14 +20,21 @@ class Post {
 
   int get getPostUpdatedAt => updatedAt;
 
-  Post.fromMap(dynamic obj) {
-    this.id = obj["pid"];
+  Post.fromMap(Map obj) {
+    this.id = setId(obj);
     this.title = obj["name"];
     this.titleKy = obj["name_ky"];
     this.description = obj["content"];
     this.descriptionKy = obj["content_ky"];
     this.sort = obj["position"];
     this.updatedAt = obj["updated_at"];
+  }
+
+  setId(Map obj) {
+    if (obj.containsKey('pid')) {
+      return obj['pid'];
+    } else
+      return obj['id'];
   }
 
   Map<String, dynamic> toMap() {

@@ -46,7 +46,10 @@ class Screen2 extends StatelessWidget {
                     height: 100,
                     color: clr(context, 'accent'),
                     child: Center(
-                      child: txtTitle(context, title, Colors.white),
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16.0),
+                        child: txtTitle(context, title, Colors.white),
+                      ),
                     ),
                   ),
                 ),

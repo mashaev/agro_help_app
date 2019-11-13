@@ -35,7 +35,7 @@ class DatabaseHelper {
     cprint('initDB is run');
 
     var databasesPath = await getDatabasesPath();
-    String path = join(databasesPath, "asset_database3.db");
+    String path = join(databasesPath, "asset_database4.db");
     var exists = await databaseExists(path);
     //await deleteDatabase(path);
     if (!exists) {
@@ -168,7 +168,7 @@ class DatabaseHelper {
       return null;
     }
 
-    //cprint('db $table result max upd: ${result[0]['MAX(updated_at)']}');
+    cprint('db $table result max upd: ${result[0]['MAX(updated_at)']}');
     return result[0]['MAX(updated_at)'];
   }
 
@@ -211,7 +211,7 @@ class DatabaseHelper {
 
           List resultList = result as List;
           if (resultList.length == 0) {
-            //cprint('nothing to update post');
+            cprint('nothing to update post');
           }
 
           // print('fetched posts: ${resultList.first}');
@@ -264,7 +264,7 @@ class DatabaseHelper {
 
     var result = await dbCategory.rawQuery(sql);
     if (result.length == 0) {
-      cprint("table is empty");
+      cprint("table is empty for ctg $categoryId");
       return null;
     }
     //print('here12q: ${result[1]}');
@@ -311,12 +311,12 @@ class DatabaseHelper {
 
           List resultList = result as List;
           if (resultList.length == 0) {
-            //cprint('nothing to update postCategory');
+            cprint('nothing to update postCategory');
           }
 
           for (var item in resultList) {
             var postCtg = PostCategory.fromMap(item);
-            // print('updated_value: ${cat.getTitle}');
+            //print('updated_value: ${cat.getTitle}');
             saved = db.syncPostCategoryData(postCtg);
             // saved.then((val) {});
           }
@@ -417,7 +417,8 @@ class DatabaseHelper {
   void test() async {
     var dbc = await db;
     String sql;
-    sql = "SELECT id, name FROM post";
+    sql = "SELECT id, category_id, post_id FROM post_category";
+    //sql = "SELECT id,name FROM post";
     //sql = "SELECT id,picture FROM category WHERE parent_id IS NULL";
     //sql = "SELECT * FROM category WHERE parent_id = $parentId";
 
